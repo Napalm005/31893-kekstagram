@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Александр Фролов](https://up.htmlacademy.ru/javascript/11/user/31893).
-* Наставник: `Неизвестно`.
+* Наставник: [Валерий Заочный](https://htmlacademy.ru/profile/id544753).
 
 ---
 
