@@ -45,15 +45,10 @@ pictures.addEventListener('click', function (evt) {
   if (evt.target.className === 'picture') {
     fillGalleryOverlay(evt.target);
   } else {
+    fillGalleryOverlay(evt.target.parentElement);
   }
   showGallery();
 });
-// pictures.addEventListener('keydown', function (evt) {
-//   evt.preventDefault();
-//   if (evt.keyCode === ENTER_KEYCODE) {
-//     showGallery();
-//   }
-// });
 
 galleryCloseTrigger.addEventListener('click', function () {
   closeGallery();
