@@ -31,16 +31,16 @@ for (var i = 0; i < photos.length; i++) {
 }
 pictures.appendChild(fragment);
 
-fillGalleryOverlay(photos[0]);
 function fillGalleryOverlay(photo) {
-  document.querySelector('.gallery-overlay-image').src = photo.url;
-  document.querySelector('.likes-count').innerText = photo.likes;
-  document.querySelector('.comments-count').innerText = photo.comments.length;
+  document.querySelector('.gallery-overlay-image').src = photo.src;
+  document.querySelector('.likes-count').innerText = photo.parentElement.querySelector('.picture-likes').innerText;
+  document.querySelector('.comments-count').innerText = photo.parentElement.querySelectorAll('.picture-comments').length;
 }
 
 pictures.addEventListener('click', function (evt) {
   if (evt.target.parentElement.className === 'picture') {
     evt.preventDefault();
+    fillGalleryOverlay(evt.target);
     showGallery();
   }
 });
@@ -55,7 +55,7 @@ galleryCloseTrigger.addEventListener('click', function () {
   closeGallery();
 });
 galleryCloseTrigger.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
+  if (evt.keyCode === ENTER_KEYCODE) {
     closeGallery();
   }
 });
