@@ -20,6 +20,21 @@ var uploadFormCancel = uploadSelectImage.querySelector('.upload-form-cancel');
 var uploadFormDescription = uploadSelectImage.querySelector('.upload-form-description');
 
 
+uploadFormDescription.addEventListener('invalid', function () {
+  if (uploadFormDescription.validity.tooLong) {
+    uploadFormDescription.setCustomValidity('Максимальная длина комментария 140 символов');
+  }
+});
+
+// for edge
+uploadFormDescription.addEventListener('input', function (evt) {
+  var target = evt.target;
+  if (target.value.length > 140) {
+    target.setCustomValidity('Максимальная длина комментария 140 символов');
+  }
+});
+
+
 uploadFile.addEventListener('change', function (evt) {
   evt.preventDefault();
   showFormWindowing();
