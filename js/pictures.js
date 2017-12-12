@@ -13,6 +13,41 @@ var ENTER_KEYCODE = 13;
 var galleryOverlayImage = document.querySelector('.gallery-overlay-image');
 var likesCount = document.querySelector('.likes-count');
 var commentsCount = document.querySelector('.comments-count');
+var uploadSelectImage = document.querySelector('#upload-select-image');
+var uploadFile = uploadSelectImage.querySelector('#upload-file');
+var uploadOverlay = uploadSelectImage.querySelector('.upload-overlay');
+var uploadFormCancel = uploadSelectImage.querySelector('.upload-form-cancel');
+var uploadFormDescription = uploadSelectImage.querySelector('.upload-form-description');
+
+
+uploadFile.addEventListener('change', function (evt) {
+  evt.preventDefault();
+  showFormWindowing();
+});
+
+uploadFormCancel.addEventListener('click', function () {
+  closeFormWindowing();
+});
+uploadFormCancel.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closeFormWindowing();
+  }
+});
+
+function showFormWindowing() {
+  uploadOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', onFormWindowingEscPress);
+}
+function closeFormWindowing() {
+  uploadOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', onFormWindowingEscPress);
+}
+function onFormWindowingEscPress(evt) {
+  if (evt.keyCode === ESC_KEYCODE && uploadFormDescription !== document.activeElement) {
+    closeFormWindowing();
+  }
+}
+
 
 createPhotosArray();
 function createPhotosArray() {
