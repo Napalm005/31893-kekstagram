@@ -26,7 +26,54 @@ var UPLOAD_RESIZE_STEP = 25;
 var UPLOAD_RESIZE_MIN = 25;
 var UPLOAD_RESIZE_MAX = 100;
 var checkedEffect;
+var uploadFormHashtags = uploadSelectImage.querySelector('.upload-form-hashtags');
 
+
+// Hashtags validity
+uploadFormHashtags.addEventListener('input', function (evt) {
+  var errorMessages = [];
+  var hashtagsArray = evt.target.value.toLowerCase().split(' ');
+  var isHash = 0;
+  var isUniqueElements = true;
+  var isHashLengthCorrect = 0;
+  hashtagsArray = hashtagsArray.filter(function (hashtag) {
+    return hashtag !== '';
+  });
+  for (var hashtag = 0; hashtag < hashtagsArray.length; hashtag++) {
+    if (hashtagsArray[hashtag].charAt(0) !== '#') {
+      evt.target.checkValidity = false;
+      isHash++;
+    }
+
+    if (hashtagsArray[hashtag].length > 20) {
+      isHashLengthCorrect++;
+    }
+
+    for (var j = hashtag + 1; j < hashtagsArray.length; j++) {
+      if (hashtagsArray[hashtag] === hashtagsArray[j]) {
+        isUniqueElements = false;
+      }
+    }
+  }
+  if (isHash !== 0) {
+    errorMessages.push('Требуется # перед каждым тегом');
+  }
+  if (isHashLengthCorrect !== 0) {
+    errorMessages.push('Максимальная длина одного хэш-тега 20 символов');
+  }
+  if (!isUniqueElements) {
+    errorMessages.push('Теги повторяются');
+  }
+  if (hashtagsArray.length > 5) {
+    evt.target.checkValidity = false;
+    errorMessages.push('Не больше 5 тегов');
+  }
+  var errorMessagesString = errorMessages.join('. \n');
+  evt.target.setCustomValidity(errorMessagesString);
+});
+
+
+// setEffect logic
 function setEffect(evt) {
   if (evt.target.classList.contains('upload-effect-label')) {
     checkedEffect = evt.target.previousElementSibling;
@@ -61,6 +108,7 @@ uploadResizeControls.addEventListener('click', function (evt) {
 });
 
 
+// Comments validity
 uploadFormDescription.addEventListener('invalid', function () {
   if (uploadFormDescription.validity.tooLong) {
     uploadFormDescription.setCustomValidity('Максимальная длина комментария 140 символов');
