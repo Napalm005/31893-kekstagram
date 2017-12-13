@@ -18,6 +18,47 @@ var uploadFile = uploadSelectImage.querySelector('#upload-file');
 var uploadOverlay = uploadSelectImage.querySelector('.upload-overlay');
 var uploadFormCancel = uploadSelectImage.querySelector('.upload-form-cancel');
 var uploadFormDescription = uploadSelectImage.querySelector('.upload-form-description');
+var uploadResizeControls = uploadSelectImage.querySelector('.upload-resize-controls');
+var uploadResizeControlsValue = uploadSelectImage.querySelector('.upload-resize-controls-value');
+var uploadEffectControls = uploadSelectImage.querySelector('.upload-effect-controls');
+var effectImagePreview = uploadSelectImage.querySelector('.effect-image-preview');
+var UPLOAD_RESIZE_STEP = 25;
+var UPLOAD_RESIZE_MIN = 25;
+var UPLOAD_RESIZE_MAX = 100;
+var checkedEffect;
+
+function setEffect(evt) {
+  if (evt.target.classList.contains('upload-effect-label')) {
+    checkedEffect = evt.target.previousElementSibling;
+  } else if (evt.target.classList.contains('upload-effect-preview')) {
+    checkedEffect = evt.target.parentNode.previousElementSibling;
+  }
+  var checkedEffectName = checkedEffect.id.substring(14);
+  effectImagePreview.className = '';
+  effectImagePreview.classList.add('effect-image-preview', 'effect-' + checkedEffectName);
+}
+uploadEffectControls.addEventListener('click', setEffect);
+uploadEffectControls.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    setEffect(evt);
+  }
+});
+function changeResizeControlsValue(limitNumber, step) {
+  var uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
+  if (uploadResizeControlsValueNumber === limitNumber) {
+    return;
+  } else {
+    uploadResizeControlsValue.value = uploadResizeControlsValueNumber + step + '%';
+    effectImagePreview.style.transform = 'scale(' + (uploadResizeControlsValueNumber + step) / 100 + ')';
+  }
+}
+uploadResizeControls.addEventListener('click', function (evt) {
+  if (evt.target.classList.contains('upload-resize-controls-button-inc')) {
+    changeResizeControlsValue(UPLOAD_RESIZE_MAX, UPLOAD_RESIZE_STEP);
+  } else if (evt.target.classList.contains('upload-resize-controls-button-dec')) {
+    changeResizeControlsValue(UPLOAD_RESIZE_MIN, -UPLOAD_RESIZE_STEP);
+  }
+});
 
 
 uploadFormDescription.addEventListener('invalid', function () {
@@ -25,7 +66,6 @@ uploadFormDescription.addEventListener('invalid', function () {
     uploadFormDescription.setCustomValidity('Максимальная длина комментария 140 символов');
   }
 });
-
 // for edge
 uploadFormDescription.addEventListener('input', function (evt) {
   var target = evt.target;
@@ -39,7 +79,6 @@ uploadFile.addEventListener('change', function (evt) {
   evt.preventDefault();
   showFormWindowing();
 });
-
 uploadFormCancel.addEventListener('click', function () {
   closeFormWindowing();
 });
@@ -48,7 +87,6 @@ uploadFormCancel.addEventListener('keydown', function (evt) {
     closeFormWindowing();
   }
 });
-
 function showFormWindowing() {
   uploadOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onFormWindowingEscPress);
