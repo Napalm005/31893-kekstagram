@@ -16,17 +16,36 @@ var commentsCount = document.querySelector('.comments-count');
 var uploadSelectImage = document.querySelector('#upload-select-image');
 var uploadFile = uploadSelectImage.querySelector('#upload-file');
 var uploadOverlay = uploadSelectImage.querySelector('.upload-overlay');
+var uploadForm = document.querySelector('#upload-select-image');
 var uploadFormCancel = uploadSelectImage.querySelector('.upload-form-cancel');
 var uploadFormDescription = uploadSelectImage.querySelector('.upload-form-description');
 var uploadResizeControls = uploadSelectImage.querySelector('.upload-resize-controls');
 var uploadResizeControlsValue = uploadSelectImage.querySelector('.upload-resize-controls-value');
 var uploadEffectControls = uploadSelectImage.querySelector('.upload-effect-controls');
+var uploadSubmit = uploadSelectImage.querySelector('#upload-submit');
 var effectImagePreview = uploadSelectImage.querySelector('.effect-image-preview');
 var UPLOAD_RESIZE_STEP = 25;
 var UPLOAD_RESIZE_MIN = 25;
 var UPLOAD_RESIZE_MAX = 100;
 var checkedEffect;
 var uploadFormHashtags = uploadSelectImage.querySelector('.upload-form-hashtags');
+
+// Validity check
+uploadSubmit.addEventListener('click', function () {
+  var invalidInputs = uploadForm.querySelectorAll('input:invalid');
+  for (var invalidInput = 0; invalidInput < invalidInputs.length; invalidInput++) {
+    invalidInputs[invalidInput].style.borderColor = 'red';
+  }
+});
+
+
+// reset form after submit
+uploadForm.addEventListener('submit', function () {
+  uploadForm.reset();
+  var uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
+  effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
+  effectImagePreview.className = 'effect-image-preview';
+});
 
 
 // Hashtags validity
@@ -81,8 +100,7 @@ function setEffect(evt) {
     checkedEffect = evt.target.parentNode.previousElementSibling;
   }
   var checkedEffectName = checkedEffect.id.substring(14);
-  effectImagePreview.className = '';
-  effectImagePreview.classList.add('effect-image-preview', 'effect-' + checkedEffectName);
+  effectImagePreview.className = 'effect-image-preview effect-' + checkedEffectName;
 }
 uploadEffectControls.addEventListener('click', setEffect);
 uploadEffectControls.addEventListener('keydown', function (evt) {
