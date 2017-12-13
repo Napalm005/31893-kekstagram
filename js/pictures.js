@@ -27,6 +27,9 @@ var effectImagePreview = uploadSelectImage.querySelector('.effect-image-preview'
 var UPLOAD_RESIZE_STEP = 25;
 var UPLOAD_RESIZE_MIN = 25;
 var UPLOAD_RESIZE_MAX = 100;
+var MAX_COMMENT_SIGNS = 140;
+var MAX_HASHTAG_LENGTH = 20;
+var MAX_HASHTAGS_QUANTITY = 5;
 var checkedEffect;
 var uploadFormHashtags = uploadSelectImage.querySelector('.upload-form-hashtags');
 
@@ -64,7 +67,7 @@ uploadFormHashtags.addEventListener('input', function (evt) {
       isHash++;
     }
 
-    if (hashtagsArray[hashtag].length > 20) {
+    if (hashtagsArray[hashtag].length > MAX_HASHTAG_LENGTH) {
       isHashLengthCorrect++;
     }
 
@@ -78,14 +81,14 @@ uploadFormHashtags.addEventListener('input', function (evt) {
     errorMessages.push('Требуется # перед каждым тегом');
   }
   if (isHashLengthCorrect !== 0) {
-    errorMessages.push('Максимальная длина одного хэш-тега 20 символов');
+    errorMessages.push('Максимальная длина одного хэш-тега' + MAX_HASHTAG_LENGTH + ' символов');
   }
   if (!isUniqueElements) {
     errorMessages.push('Теги повторяются');
   }
-  if (hashtagsArray.length > 5) {
+  if (hashtagsArray.length > MAX_HASHTAGS_QUANTITY) {
     evt.target.checkValidity = false;
-    errorMessages.push('Не больше 5 тегов');
+    errorMessages.push('Не больше' + MAX_HASHTAGS_QUANTITY + ' тегов');
   }
   var errorMessagesString = errorMessages.join('. \n');
   evt.target.setCustomValidity(errorMessagesString);
@@ -135,8 +138,8 @@ uploadFormDescription.addEventListener('invalid', function () {
 // for edge
 uploadFormDescription.addEventListener('input', function (evt) {
   var target = evt.target;
-  if (target.value.length > 140) {
-    target.setCustomValidity('Максимальная длина комментария 140 символов');
+  if (target.value.length > MAX_COMMENT_SIGNS) {
+    target.setCustomValidity('Максимальная длина комментария' + MAX_COMMENT_SIGNS + ' символов');
   }
 });
 
