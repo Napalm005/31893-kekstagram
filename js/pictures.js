@@ -32,22 +32,25 @@ var MAX_HASHTAG_LENGTH = 20;
 var MAX_HASHTAGS_QUANTITY = 5;
 var checkedEffect;
 var uploadFormHashtags = uploadSelectImage.querySelector('.upload-form-hashtags');
+var currentEffectName = uploadSelectImage.querySelector('[name="effect"]:checked').id.substring(14);
 
-// Validity check
-uploadSubmit.addEventListener('click', function () {
+// Validity check and reset form after submit
+uploadSubmit.addEventListener('click', function (evt) {
+  evt.preventDefault();
   var invalidInputs = uploadForm.querySelectorAll('input:invalid');
-  for (var invalidInput = 0; invalidInput < invalidInputs.length; invalidInput++) {
-    invalidInputs[invalidInput].style.borderColor = 'red';
+  if (invalidInputs.length) {
+    for (var invalidInput = 0; invalidInput < invalidInputs.length; invalidInput++) {
+      invalidInputs[invalidInput].style.borderColor = 'red';
+    }
+  } else {
+    uploadForm.reset();
+    var uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
+    effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
+    effectImagePreview.classList.remove('effect-' + currentEffectName);
+    // setTimeout(function () {
+    //   uploadForm.submit();
+    // }, 1000);
   }
-});
-
-
-// reset form after submit
-uploadForm.addEventListener('submit', function () {
-  uploadForm.reset();
-  var uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
-  effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
-  effectImagePreview.className = 'effect-image-preview';
 });
 
 
@@ -81,14 +84,14 @@ uploadFormHashtags.addEventListener('input', function (evt) {
     errorMessages.push('Требуется # перед каждым тегом');
   }
   if (isHashLengthCorrect !== 0) {
-    errorMessages.push('Максимальная длина одного хэш-тега' + MAX_HASHTAG_LENGTH + ' символов');
+    errorMessages.push('Максимальная длина одного хэш-тега ' + MAX_HASHTAG_LENGTH + ' символов');
   }
   if (!isUniqueElements) {
     errorMessages.push('Теги повторяются');
   }
   if (hashtagsArray.length > MAX_HASHTAGS_QUANTITY) {
     evt.target.checkValidity = false;
-    errorMessages.push('Не больше' + MAX_HASHTAGS_QUANTITY + ' тегов');
+    errorMessages.push('Не больше ' + MAX_HASHTAGS_QUANTITY + ' тегов');
   }
   var errorMessagesString = errorMessages.join('. \n');
   evt.target.setCustomValidity(errorMessagesString);
@@ -103,7 +106,9 @@ function setEffect(evt) {
     checkedEffect = evt.target.parentNode.previousElementSibling;
   }
   var checkedEffectName = checkedEffect.id.substring(14);
-  effectImagePreview.className = 'effect-image-preview effect-' + checkedEffectName;
+  effectImagePreview.classList.remove('effect-' + currentEffectName);
+  effectImagePreview.classList.add('effect-' + checkedEffectName);
+  currentEffectName = checkedEffectName;
 }
 uploadEffectControls.addEventListener('click', setEffect);
 uploadEffectControls.addEventListener('keydown', function (evt) {
@@ -132,14 +137,14 @@ uploadResizeControls.addEventListener('click', function (evt) {
 // Comments validity
 uploadFormDescription.addEventListener('invalid', function () {
   if (uploadFormDescription.validity.tooLong) {
-    uploadFormDescription.setCustomValidity('Максимальная длина комментария 140 символов');
+    uploadFormDescription.setCustomValidity('Максимальная длина комментария ' + MAX_COMMENT_SIGNS + ' символов');
   }
 });
 // for edge
 uploadFormDescription.addEventListener('input', function (evt) {
   var target = evt.target;
   if (target.value.length > MAX_COMMENT_SIGNS) {
-    target.setCustomValidity('Максимальная длина комментария' + MAX_COMMENT_SIGNS + ' символов');
+    target.setCustomValidity('Максимальная длина комментария ' + MAX_COMMENT_SIGNS + ' символов');
   }
 });
 
