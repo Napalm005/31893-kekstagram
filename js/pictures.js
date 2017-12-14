@@ -33,6 +33,7 @@ var MAX_HASHTAGS_QUANTITY = 5;
 var checkedEffect;
 var uploadFormHashtags = uploadSelectImage.querySelector('.upload-form-hashtags');
 var currentEffectName = uploadSelectImage.querySelector('[name="effect"]:checked').id.substring(14);
+var uploadResizeControlsValueNumber;
 
 // Validity check and reset form after submit
 uploadSubmit.addEventListener('click', function (evt) {
@@ -43,15 +44,18 @@ uploadSubmit.addEventListener('click', function (evt) {
       invalidInputs[invalidInput].style.borderColor = 'red';
     }
   } else {
-    uploadForm.reset();
-    var uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
-    effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
-    effectImagePreview.classList.remove('effect-' + currentEffectName);
-    // setTimeout(function () {
-    //   uploadForm.submit();
-    // }, 1000);
+    resetFilters();
   }
 });
+function resetFilters() {
+  uploadForm.reset();
+  uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
+  effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
+  effectImagePreview.classList.remove('effect-' + currentEffectName);
+  // setTimeout(function () {
+  //   uploadForm.submit();
+  // }, 1000);
+}
 
 
 // Hashtags validity
@@ -116,8 +120,11 @@ uploadEffectControls.addEventListener('keydown', function (evt) {
     setEffect(evt);
   }
 });
+
+
+// resize logic
 function changeResizeControlsValue(limitNumber, step) {
-  var uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
+  uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
   if (uploadResizeControlsValueNumber === limitNumber) {
     return;
   } else {
