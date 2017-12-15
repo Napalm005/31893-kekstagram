@@ -7,5 +7,3 @@
     pictures: document.querySelector('.pictures')
   };
 })();
-
-

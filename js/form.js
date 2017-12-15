@@ -1,4 +1,5 @@
 'use strict';
+
 (function () {
   var uploadForm = document.querySelector('#upload-select-image');
   var uploadResizeControls = window.vars.uploadSelectImage.querySelector('.upload-resize-controls');
