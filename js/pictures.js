@@ -36,14 +36,14 @@ var currentEffectName = uploadSelectImage.querySelector('[name="effect"]:checked
 var uploadResizeControlsValueNumber;
 
 // Validity check and reset form after submit
-uploadSubmit.addEventListener('click', function (evt) {
-  evt.preventDefault();
+uploadSubmit.addEventListener('click', function () {
   var invalidInputs = uploadForm.querySelectorAll('input:invalid');
   if (invalidInputs.length) {
     for (var invalidInput = 0; invalidInput < invalidInputs.length; invalidInput++) {
       invalidInputs[invalidInput].style.borderColor = 'red';
     }
   } else {
+    uploadForm.submit();
     resetFilters();
   }
 });
@@ -52,9 +52,6 @@ function resetFilters() {
   uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
   effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
   effectImagePreview.classList.remove('effect-' + currentEffectName);
-  // setTimeout(function () {
-  //   uploadForm.submit();
-  // }, 1000);
 }
 
 
@@ -108,6 +105,8 @@ function setEffect(evt) {
     checkedEffect = evt.target.previousElementSibling;
   } else if (evt.target.classList.contains('upload-effect-preview')) {
     checkedEffect = evt.target.parentNode.previousElementSibling;
+  } else {
+    return;
   }
   var checkedEffectName = checkedEffect.id.substring(14);
   effectImagePreview.classList.remove('effect-' + currentEffectName);
