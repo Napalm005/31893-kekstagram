@@ -16,6 +16,15 @@
   var uploadFormHashtags = window.vars.uploadSelectImage.querySelector('.upload-form-hashtags');
   var currentEffectName = window.vars.uploadSelectImage.querySelector('[name="effect"]:checked').id.substring(14);
   var uploadResizeControlsValueNumber;
+  var rangeSlider = document.querySelector('.upload-effect-level');
+  var rangeSliderPin = rangeSlider.querySelector('.upload-effect-level-pin');
+  var rangeSliderInput = rangeSlider.querySelector('.upload-effect-level-value');
+  var rangeSliderLevel = rangeSlider.querySelector('.upload-effect-level-val');
+  var SLIDER_LINE_LENGTH = 455;
+  var step = SLIDER_LINE_LENGTH / 100;
+  var DEFAULT_EFFECT_VALUE = 20;
+  var checkedEffectName;
+
 
   // Validity check and reset form after submit
   uploadSubmit.addEventListener('click', function () {
@@ -34,6 +43,8 @@
     uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
     effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
     effectImagePreview.classList.remove('effect-' + currentEffectName);
+    rangeSliderPositionReset();
+    resetEffect();
   }
 
 
@@ -90,25 +101,35 @@
     } else {
       return;
     }
-    var checkedEffectName = checkedEffect.id.substring(14);
+    checkedEffectName = checkedEffect.id.substring(14);
     effectImagePreview.classList.remove('effect-' + currentEffectName);
     effectImagePreview.classList.add('effect-' + checkedEffectName);
     currentEffectName = checkedEffectName;
+    if (checkedEffectName !== 'none') {
+      rangeSlider.classList.remove('hidden');
+    }
+    detectionEffect(DEFAULT_EFFECT_VALUE, checkedEffectName);
+    rangeSliderPositionSet(DEFAULT_EFFECT_VALUE);
+    resetEffect();
   }
   uploadEffectControls.addEventListener('click', setEffect);
   uploadEffectControls.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, setEffect);
   });
+  function resetEffect() {
+    rangeSliderInput.value = DEFAULT_EFFECT_VALUE;
+    rangeSliderPin.style.left = DEFAULT_EFFECT_VALUE + '%';
+  }
 
 
   // resize logic
-  function changeResizeControlsValue(limitNumber, step) {
+  function changeResizeControlsValue(limitNumber, stepScale) {
     uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
     if (uploadResizeControlsValueNumber === limitNumber) {
       return;
     } else {
-      uploadResizeControlsValue.value = uploadResizeControlsValueNumber + step + '%';
-      effectImagePreview.style.transform = 'scale(' + (uploadResizeControlsValueNumber + step) / 100 + ')';
+      uploadResizeControlsValue.value = uploadResizeControlsValueNumber + stepScale + '%';
+      effectImagePreview.style.transform = 'scale(' + (uploadResizeControlsValueNumber + stepScale) / 100 + ')';
     }
   }
   uploadResizeControls.addEventListener('click', function (evt) {
@@ -118,4 +139,75 @@
       changeResizeControlsValue(UPLOAD_RESIZE_MIN, -UPLOAD_RESIZE_STEP);
     }
   });
+
+
+  // drag and drop
+  rangeSliderPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var startCoordX = evt.clientX;
+    var shift = 0;
+    var left = parseInt(evt.target.style.left, 10);
+    function onMouseMove(moveEvt) {
+      moveEvt.preventDefault();
+      shift = startCoordX - moveEvt.clientX;
+      var newValue = left - Math.floor(shift / step);
+      if (newValue < 0) {
+        rangeSliderPositionSet(0);
+        return;
+      } else if (newValue > 100) {
+        rangeSliderPositionSet(100);
+        return;
+      } else {
+        rangeSliderPositionSet(newValue);
+      }
+      detectionEffect(newValue, checkedEffectName);
+    }
+    function onMouseUp(upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    }
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
+  function detectionEffect(value, effectName) {
+    switch (effectName) {
+      case 'chrome':
+        effectImagePreview.style.filter = 'grayscale(' + value / 100 + ')';
+        break;
+      case 'sepia':
+        effectImagePreview.style.filter = 'sepia(' + value / 100 + ')';
+        break;
+      case 'marvin':
+        effectImagePreview.style.filter = 'invert(' + value + '%)';
+        break;
+      case 'phobos':
+        effectImagePreview.style.filter = 'blur(' + value * 3 / 100 + 'px)';
+        break;
+      case 'heat':
+        effectImagePreview.style.filter = 'brightness(' + value * 3 / 100 + ')';
+        break;
+      case 'none':
+        rangeSliderPositionReset();
+        rangeSlider.classList.add('hidden');
+        break;
+      default:
+
+    }
+  }
+
+  function rangeSliderPositionSet(val) {
+    rangeSliderInput.value = val;
+    rangeSliderPin.style.left = val + '%';
+    rangeSliderLevel.style.width = val + '%';
+  }
+  function rangeSliderPositionReset() {
+    rangeSliderInput.value = DEFAULT_EFFECT_VALUE;
+    rangeSliderPin.style.left = DEFAULT_EFFECT_VALUE + '%';
+    rangeSliderLevel.style.width = DEFAULT_EFFECT_VALUE + '%';
+    effectImagePreview.style.filter = null;
+  }
+
 })();
