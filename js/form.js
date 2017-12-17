@@ -7,12 +7,8 @@
   var uploadEffectControls = window.vars.uploadSelectImage.querySelector('.upload-effect-controls');
   var uploadSubmit = window.vars.uploadSelectImage.querySelector('#upload-submit');
   var effectImagePreview = window.vars.uploadSelectImage.querySelector('.effect-image-preview');
-  var UPLOAD_RESIZE_STEP = 25;
-  var UPLOAD_RESIZE_MIN = 25;
-  var UPLOAD_RESIZE_MAX = 100;
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHTAGS_QUANTITY = 5;
-  var checkedEffect;
   var uploadFormHashtags = window.vars.uploadSelectImage.querySelector('.upload-form-hashtags');
   var currentEffectName = window.vars.uploadSelectImage.querySelector('[name="effect"]:checked').id.substring(14);
   var uploadResizeControlsValueNumber;
@@ -43,8 +39,8 @@
     uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
     effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
     effectImagePreview.classList.remove('effect-' + currentEffectName);
-    rangeSliderPositionReset();
-    resetEffect();
+    resetRangeSliderPosition();
+    window.form.detectionEffect(DEFAULT_EFFECT_VALUE, 'none');
   }
 
 
@@ -93,52 +89,18 @@
 
 
   // setEffect logic
-  function setEffect(evt) {
-    if (evt.target.classList.contains('upload-effect-label')) {
-      checkedEffect = evt.target.previousElementSibling;
-    } else if (evt.target.classList.contains('upload-effect-preview')) {
-      checkedEffect = evt.target.parentNode.previousElementSibling;
-    } else {
-      return;
-    }
-    checkedEffectName = checkedEffect.id.substring(14);
-    effectImagePreview.classList.remove('effect-' + currentEffectName);
-    effectImagePreview.classList.add('effect-' + checkedEffectName);
-    currentEffectName = checkedEffectName;
-    if (checkedEffectName !== 'none') {
-      rangeSlider.classList.remove('hidden');
-    }
-    detectionEffect(DEFAULT_EFFECT_VALUE, checkedEffectName);
-    rangeSliderPositionSet(DEFAULT_EFFECT_VALUE);
-    resetEffect();
+  function applyEffect(currentEffect, checkedEffect) {
+    effectImagePreview.classList.remove('effect-' + currentEffect);
+    effectImagePreview.classList.add('effect-' + checkedEffect);
   }
-  uploadEffectControls.addEventListener('click', setEffect);
-  uploadEffectControls.addEventListener('keydown', function (evt) {
-    window.util.isEnterEvent(evt, setEffect);
-  });
-  function resetEffect() {
-    rangeSliderInput.value = DEFAULT_EFFECT_VALUE;
-    rangeSliderPin.style.left = DEFAULT_EFFECT_VALUE + '%';
-  }
+  window.initializeFilters(uploadEffectControls, applyEffect);
 
 
   // resize logic
-  function changeResizeControlsValue(limitNumber, stepScale) {
-    uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
-    if (uploadResizeControlsValueNumber === limitNumber) {
-      return;
-    } else {
-      uploadResizeControlsValue.value = uploadResizeControlsValueNumber + stepScale + '%';
-      effectImagePreview.style.transform = 'scale(' + (uploadResizeControlsValueNumber + stepScale) / 100 + ')';
-    }
+  window.initializeScale(uploadResizeControls, adjustScale);
+  function adjustScale(stepScale, valueNumber) {
+    effectImagePreview.style.transform = 'scale(' + (valueNumber + stepScale) / 100 + ')';
   }
-  uploadResizeControls.addEventListener('click', function (evt) {
-    if (evt.target.classList.contains('upload-resize-controls-button-inc')) {
-      changeResizeControlsValue(UPLOAD_RESIZE_MAX, UPLOAD_RESIZE_STEP);
-    } else if (evt.target.classList.contains('upload-resize-controls-button-dec')) {
-      changeResizeControlsValue(UPLOAD_RESIZE_MIN, -UPLOAD_RESIZE_STEP);
-    }
-  });
 
 
   // drag and drop
@@ -152,15 +114,15 @@
       shift = startCoordX - moveEvt.clientX;
       var newValue = left - Math.floor(shift / step);
       if (newValue < 0) {
-        rangeSliderPositionSet(0);
+        window.form.setRangeSliderPosition(0);
         return;
       } else if (newValue > 100) {
-        rangeSliderPositionSet(100);
+        window.form.setRangeSliderPosition(100);
         return;
       } else {
-        rangeSliderPositionSet(newValue);
+        window.form.setRangeSliderPosition(newValue);
       }
-      detectionEffect(newValue, checkedEffectName);
+      window.form.detectionEffect(newValue, checkedEffectName);
     }
     function onMouseUp(upEvt) {
       upEvt.preventDefault();
@@ -172,42 +134,47 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  function detectionEffect(value, effectName) {
-    switch (effectName) {
-      case 'chrome':
-        effectImagePreview.style.filter = 'grayscale(' + value / 100 + ')';
-        break;
-      case 'sepia':
-        effectImagePreview.style.filter = 'sepia(' + value / 100 + ')';
-        break;
-      case 'marvin':
-        effectImagePreview.style.filter = 'invert(' + value + '%)';
-        break;
-      case 'phobos':
-        effectImagePreview.style.filter = 'blur(' + value * 3 / 100 + 'px)';
-        break;
-      case 'heat':
-        effectImagePreview.style.filter = 'brightness(' + value * 3 / 100 + ')';
-        break;
-      case 'none':
-        rangeSliderPositionReset();
-        rangeSlider.classList.add('hidden');
-        break;
-      default:
-
-    }
-  }
-
-  function rangeSliderPositionSet(val) {
-    rangeSliderInput.value = val;
-    rangeSliderPin.style.left = val + '%';
-    rangeSliderLevel.style.width = val + '%';
-  }
-  function rangeSliderPositionReset() {
+  function resetRangeSliderPosition() {
     rangeSliderInput.value = DEFAULT_EFFECT_VALUE;
     rangeSliderPin.style.left = DEFAULT_EFFECT_VALUE + '%';
     rangeSliderLevel.style.width = DEFAULT_EFFECT_VALUE + '%';
     effectImagePreview.style.filter = null;
   }
+
+  window.form = {
+    detectionEffect: function (value, effectName) {
+      switch (effectName) {
+        case 'chrome':
+          effectImagePreview.style.filter = 'grayscale(' + value / 100 + ')';
+          break;
+        case 'sepia':
+          effectImagePreview.style.filter = 'sepia(' + value / 100 + ')';
+          break;
+        case 'marvin':
+          effectImagePreview.style.filter = 'invert(' + value + '%)';
+          break;
+        case 'phobos':
+          effectImagePreview.style.filter = 'blur(' + value * 3 / 100 + 'px)';
+          break;
+        case 'heat':
+          effectImagePreview.style.filter = 'brightness(' + value * 3 / 100 + ')';
+          break;
+        case 'none':
+          resetRangeSliderPosition();
+          rangeSlider.classList.add('hidden');
+          break;
+        default:
+      }
+    },
+    setRangeSliderPosition: function (val) {
+      rangeSliderInput.value = val;
+      rangeSliderPin.style.left = val + '%';
+      rangeSliderLevel.style.width = val + '%';
+    },
+    resetEffect: function () {
+      rangeSliderInput.value = DEFAULT_EFFECT_VALUE;
+      rangeSliderPin.style.left = DEFAULT_EFFECT_VALUE + '%';
+    }
+  };
 
 })();

@@ -12,7 +12,7 @@
     },
     isEnterEvent: function (evt, action) {
       if (evt.keyCode === ENTER_KEYCODE) {
-        action();
+        action(evt);
       }
     },
     getRandomArbitary: function (min, max) {
