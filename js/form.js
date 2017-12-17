@@ -10,15 +10,18 @@
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHTAGS_QUANTITY = 5;
   var uploadFormHashtags = window.vars.uploadSelectImage.querySelector('.upload-form-hashtags');
-  var currentEffectName = window.vars.uploadSelectImage.querySelector('[name="effect"]:checked').id.substring(14);
   var uploadResizeControlsValueNumber;
   var rangeSlider = document.querySelector('.upload-effect-level');
+  var currentEffectName = window.vars.uploadSelectImage.querySelector('[name="effect"]:checked').id.substring(14);
   var rangeSliderPin = rangeSlider.querySelector('.upload-effect-level-pin');
   var rangeSliderInput = rangeSlider.querySelector('.upload-effect-level-value');
   var rangeSliderLevel = rangeSlider.querySelector('.upload-effect-level-val');
   var SLIDER_LINE_LENGTH = 455;
   var step = SLIDER_LINE_LENGTH / 100;
   var DEFAULT_EFFECT_VALUE = 20;
+  var UPLOAD_RESIZE_STEP = 25;
+  var UPLOAD_RESIZE_MIN = 25;
+  var UPLOAD_RESIZE_MAX = 100;
   var checkedEffectName;
 
 
@@ -34,14 +37,6 @@
       resetFilters();
     }
   });
-  function resetFilters() {
-    uploadForm.reset();
-    uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
-    effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
-    effectImagePreview.classList.remove('effect-' + currentEffectName);
-    resetRangeSliderPosition();
-    window.form.detectionEffect(DEFAULT_EFFECT_VALUE, 'none');
-  }
 
 
   // Hashtags validity
@@ -89,15 +84,33 @@
 
 
   // setEffect logic
-  function applyEffect(currentEffect, checkedEffect) {
-    effectImagePreview.classList.remove('effect-' + currentEffect);
-    effectImagePreview.classList.add('effect-' + checkedEffect);
-  }
   window.initializeFilters(uploadEffectControls, applyEffect);
+  function applyEffect(checkedEffect) {
+    checkedEffectName = checkedEffect.id.substring(14);
+    effectImagePreview.classList.remove('effect-' + currentEffectName);
+    effectImagePreview.classList.add('effect-' + checkedEffectName);
+    currentEffectName = checkedEffectName;
+
+    if (checkedEffectName !== 'none') {
+      rangeSlider.classList.remove('hidden');
+    }
+
+    detectionEffect(DEFAULT_EFFECT_VALUE, checkedEffectName);
+    setRangeSliderPosition(DEFAULT_EFFECT_VALUE);
+    resetEffect();
+  }
+  function resetFilters() {
+    uploadForm.reset();
+    uploadResizeControlsValueNumber = parseInt(uploadResizeControlsValue.value, 10);
+    effectImagePreview.style.transform = 'scale(' + uploadResizeControlsValueNumber / 100 + ')';
+    effectImagePreview.classList.remove('effect-' + currentEffectName);
+    resetRangeSliderPosition();
+    detectionEffect(DEFAULT_EFFECT_VALUE, 'none');
+  }
 
 
   // resize logic
-  window.initializeScale(uploadResizeControls, adjustScale);
+  window.initializeScale(uploadResizeControls, UPLOAD_RESIZE_STEP, UPLOAD_RESIZE_MIN, UPLOAD_RESIZE_MAX, adjustScale);
   function adjustScale(stepScale, valueNumber) {
     effectImagePreview.style.transform = 'scale(' + (valueNumber + stepScale) / 100 + ')';
   }
@@ -114,15 +127,15 @@
       shift = startCoordX - moveEvt.clientX;
       var newValue = left - Math.floor(shift / step);
       if (newValue < 0) {
-        window.form.setRangeSliderPosition(0);
+        setRangeSliderPosition(0);
         return;
       } else if (newValue > 100) {
-        window.form.setRangeSliderPosition(100);
+        setRangeSliderPosition(100);
         return;
       } else {
-        window.form.setRangeSliderPosition(newValue);
+        setRangeSliderPosition(newValue);
       }
-      window.form.detectionEffect(newValue, checkedEffectName);
+      detectionEffect(newValue, checkedEffectName);
     }
     function onMouseUp(upEvt) {
       upEvt.preventDefault();
@@ -141,40 +154,39 @@
     effectImagePreview.style.filter = null;
   }
 
-  window.form = {
-    detectionEffect: function (value, effectName) {
-      switch (effectName) {
-        case 'chrome':
-          effectImagePreview.style.filter = 'grayscale(' + value / 100 + ')';
-          break;
-        case 'sepia':
-          effectImagePreview.style.filter = 'sepia(' + value / 100 + ')';
-          break;
-        case 'marvin':
-          effectImagePreview.style.filter = 'invert(' + value + '%)';
-          break;
-        case 'phobos':
-          effectImagePreview.style.filter = 'blur(' + value * 3 / 100 + 'px)';
-          break;
-        case 'heat':
-          effectImagePreview.style.filter = 'brightness(' + value * 3 / 100 + ')';
-          break;
-        case 'none':
-          resetRangeSliderPosition();
-          rangeSlider.classList.add('hidden');
-          break;
-        default:
-      }
-    },
-    setRangeSliderPosition: function (val) {
-      rangeSliderInput.value = val;
-      rangeSliderPin.style.left = val + '%';
-      rangeSliderLevel.style.width = val + '%';
-    },
-    resetEffect: function () {
-      rangeSliderInput.value = DEFAULT_EFFECT_VALUE;
-      rangeSliderPin.style.left = DEFAULT_EFFECT_VALUE + '%';
+  function detectionEffect(value, effectName) {
+    switch (effectName) {
+      case 'chrome':
+        effectImagePreview.style.filter = 'grayscale(' + value / 100 + ')';
+        break;
+      case 'sepia':
+        effectImagePreview.style.filter = 'sepia(' + value / 100 + ')';
+        break;
+      case 'marvin':
+        effectImagePreview.style.filter = 'invert(' + value + '%)';
+        break;
+      case 'phobos':
+        effectImagePreview.style.filter = 'blur(' + value * 3 / 100 + 'px)';
+        break;
+      case 'heat':
+        effectImagePreview.style.filter = 'brightness(' + value * 3 / 100 + ')';
+        break;
+      case 'none':
+        resetRangeSliderPosition();
+        rangeSlider.classList.add('hidden');
+        break;
+      default:
     }
-  };
+  }
+
+  function setRangeSliderPosition(val) {
+    rangeSliderInput.value = val;
+    rangeSliderPin.style.left = val + '%';
+    rangeSliderLevel.style.width = val + '%';
+  }
+  function resetEffect() {
+    rangeSliderInput.value = DEFAULT_EFFECT_VALUE;
+    rangeSliderPin.style.left = DEFAULT_EFFECT_VALUE + '%';
+  }
 
 })();
