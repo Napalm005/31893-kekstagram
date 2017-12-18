@@ -8,10 +8,21 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
-        onSuccess(xhr.response);
-      } else {
-        onError(xhr.response);
+      switch (xhr.status) {
+        case 200:
+          onSuccess(xhr.response);
+          break;
+        case 400:
+          onError(xhr.status + ': Неверный запрос' + xhr.statusText);
+          break;
+        case 401:
+          onError(xhr.status + ': ' + xhr.statusText);
+          break;
+        case 404:
+          onError(xhr.status + ': ' + xhr.statusText);
+          break;
+        default:
+          onError('Ваще непонятно');
       }
     });
     xhr.addEventListener('error', function () {
