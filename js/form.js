@@ -3,7 +3,7 @@
 (function () {
   var uploadForm = document.querySelector('#upload-select-image');
   var uploadResizeControls = window.vars.uploadSelectImage.querySelector('.upload-resize-controls');
-  var uploadResizeControlsValue = window.vars.uploadSelectImage.querySelector('.upload-resize-controls-value');
+  var uploadResizeControlsValue = uploadResizeControls.querySelector('.upload-resize-controls-value');
   var uploadEffectControls = window.vars.uploadSelectImage.querySelector('.upload-effect-controls');
   var uploadSubmit = window.vars.uploadSelectImage.querySelector('#upload-submit');
   var effectImagePreview = window.vars.uploadSelectImage.querySelector('.effect-image-preview');
@@ -33,10 +33,15 @@
         invalidInputs[invalidInput].style.borderColor = 'red';
       }
     } else {
-      uploadForm.submit();
+      window.backend.save(new FormData(uploadForm), function () {
+        window.preview.uploadOverlay.classList.add('hidden');
+      }, window.data.errorHandler);
       resetFilters();
     }
   });
+  uploadForm.onSubmit = function (evt) {
+    evt.preventDefault();
+  };
 
 
   // Hashtags validity

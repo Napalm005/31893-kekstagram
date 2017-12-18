@@ -28,4 +28,8 @@
       window.util.isEscEvent(evt, closeFormWindowing);
     }
   }
+
+  window.preview = {
+    uploadOverlay: uploadOverlay
+  };
 })();

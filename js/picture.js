@@ -26,8 +26,10 @@
     evt.preventDefault();
     if (evt.target.className === 'picture') {
       fillGalleryOverlay(evt.target);
-    } else {
+    } else if (evt.target.tagName.toLowerCase() === 'img') {
       fillGalleryOverlay(evt.target.parentElement);
+    } else {
+      return;
     }
     showGallery();
   });
