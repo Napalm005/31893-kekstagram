@@ -2,7 +2,8 @@
 
 (function () {
   window.initializeScale = function (scaleElement, resizeStep, resizeMin, resizeMax, callback) {
-    var uploadResizeControlsValue = window.vars.uploadSelectImage.querySelector('.upload-resize-controls-value');
+
+    var uploadResizeControlsValue = scaleElement.querySelector('.upload-resize-controls-value');
     var uploadResizeControlsValueNumber;
 
     scaleElement.addEventListener('click', onScaleBtnClick);
