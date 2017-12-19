@@ -3,6 +3,7 @@
 (function () {
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
+  var lastTimeout;
 
   window.util = {
     isEscEvent: function (evt, action) {
@@ -17,6 +18,12 @@
     },
     getRandomArbitary: function (min, max) {
       return parseInt(Math.random() * (max - min) + min, 10);
+    },
+    debounce: function (fun, debounceInterval, param) {
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(fun, debounceInterval, param);
     }
   };
 })();
