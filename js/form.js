@@ -181,6 +181,7 @@
         rangeSlider.classList.add('hidden');
         break;
       default:
+        break;
     }
   }
 

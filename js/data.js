@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 500;
+  var photos = [];
+  var filters = document.querySelector('.filters');
+
   window.data = {
     errorHandler: function (errorMessage) {
       var node = document.createElement('div');
@@ -13,27 +17,40 @@
     }
   };
 
-  var pictureTemplate = document.querySelector('#picture-template').content.querySelector('.picture');
-
   window.backend.load(successHandler, window.data.errorHandler);
 
-  function successHandler(photos) {
-    renderPictures(photos);
+  function successHandler(data) {
+    photos = data;
+    window.render.renderPictures(photos);
+    filters.classList.remove('filters-inactive');
   }
 
-  function renderPictures(photos) {
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < photos.length; i++) {
-      fragment.appendChild(createPicture(photos[i]));
+  filters.addEventListener('click', function (evt) {
+    if (evt.target.tagName.toLowerCase() === 'input' && evt.target.id !== 'filter-recommend') {
+      window.util.debounce(updatePictures, DEBOUNCE_INTERVAL, evt.target.id);
+    } else if (evt.target.id === 'filter-recommend') {
+      window.util.debounce(window.render.renderPictures, DEBOUNCE_INTERVAL, photos);
     }
-    window.vars.pictures.appendChild(fragment);
-  }
+  });
 
-  function createPicture(picture) {
-    var pictureElement = pictureTemplate.cloneNode(true);
-    pictureElement.querySelector('img').src = picture.url;
-    pictureElement.querySelector('.picture-likes').innerText = picture.likes;
-    pictureElement.querySelector('.picture-comments').innerText = picture.comments;
-    return pictureElement;
+  function updatePictures(sortName) {
+    var diff;
+    window.render.renderPictures(photos.slice().
+        sort(function (left, right) {
+          switch (sortName) {
+            case 'filter-popular':
+              diff = left.likes - right.likes;
+              break;
+            case 'filter-discussed':
+              diff = left.comments.length - right.comments.length;
+              break;
+            case 'filter-random':
+              diff = window.util.getRandomArbitary(-10, 10);
+              break;
+            default:
+              break;
+          }
+          return diff;
+        }));
   }
 })();
