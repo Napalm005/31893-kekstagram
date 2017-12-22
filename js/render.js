@@ -7,7 +7,7 @@
     var pictureElement = pictureTemplate.cloneNode(true);
     pictureElement.querySelector('img').src = picture.url;
     pictureElement.querySelector('.picture-likes').innerHTML = picture.likes;
-    pictureElement.querySelector('.picture-comments').innerHTML = picture.comments;
+    pictureElement.querySelector('.picture-comments').innerHTML = picture.comments.length;
     return pictureElement;
   }
 

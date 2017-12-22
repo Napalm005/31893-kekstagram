@@ -39,10 +39,10 @@
         sort(function (left, right) {
           switch (sortName) {
             case 'filter-popular':
-              diff = left.likes - right.likes;
+              diff = right.likes - left.likes;
               break;
             case 'filter-discussed':
-              diff = left.comments.length - right.comments.length;
+              diff = right.comments.length - left.comments.length;
               break;
             case 'filter-random':
               diff = window.util.getRandomArbitary(-10, 10);
