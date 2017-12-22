@@ -24,6 +24,7 @@
   var rangeSliderLevel = rangeSlider.querySelector('.upload-effect-level-val');
   var checkedEffectName;
 
+  rangeSliderInput.classList.add('hidden');
 
   // Validity check and reset form after submit
   uploadSubmit.addEventListener('click', function () {

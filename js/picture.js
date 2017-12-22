@@ -35,8 +35,8 @@
   });
   function fillGalleryOverlay(photo) {
     galleryOverlayImage.src = photo.querySelector('img').src;
-    likesCount.innerHTML = photo.querySelector('.picture-likes').innerHTML;
-    commentsCount.innerHTML = photo.querySelectorAll('.picture-comments').length;
+    likesCount.textContent = photo.querySelector('.picture-likes').textContent;
+    commentsCount.textContent = photo.querySelectorAll('.picture-comments').length;
   }
 
   galleryCloseTrigger.addEventListener('click', function () {
