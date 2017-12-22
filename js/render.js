@@ -15,9 +15,9 @@
     renderPictures: function (photosArray) {
       window.vars.pictures.innerHTML = '';
       var fragment = document.createDocumentFragment();
-      for (var i = 0; i < photosArray.length; i++) {
-        fragment.appendChild(createPicture(photosArray[i]));
-      }
+      photosArray.forEach(function (photo) {
+        fragment.appendChild(createPicture(photo));
+      });
       window.vars.pictures.appendChild(fragment);
     }
   };
