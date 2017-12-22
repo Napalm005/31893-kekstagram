@@ -6,8 +6,8 @@
   function createPicture(picture) {
     var pictureElement = pictureTemplate.cloneNode(true);
     pictureElement.querySelector('img').src = picture.url;
-    pictureElement.querySelector('.picture-likes').innerText = picture.likes;
-    pictureElement.querySelector('.picture-comments').innerText = picture.comments;
+    pictureElement.querySelector('.picture-likes').innerHTML = picture.likes;
+    pictureElement.querySelector('.picture-comments').innerHTML = picture.comments;
     return pictureElement;
   }
 
