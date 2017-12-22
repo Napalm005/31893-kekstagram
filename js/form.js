@@ -1,14 +1,20 @@
 'use strict';
 
 (function () {
+  var DEFAULT_EFFECT_VALUE = 20;
+  var UPLOAD_RESIZE_STEP = 25;
+  var UPLOAD_RESIZE_MIN = 25;
+  var UPLOAD_RESIZE_MAX = 100;
+  var MAX_HASHTAG_LENGTH = 20;
+  var MAX_HASHTAGS_QUANTITY = 5;
+  var SLIDER_LINE_LENGTH = 455;
+  var step = SLIDER_LINE_LENGTH / 100;
   var uploadForm = document.querySelector('#upload-select-image');
   var uploadResizeControls = window.vars.uploadSelectImage.querySelector('.upload-resize-controls');
   var uploadResizeControlsValue = uploadResizeControls.querySelector('.upload-resize-controls-value');
   var uploadEffectControls = window.vars.uploadSelectImage.querySelector('.upload-effect-controls');
   var uploadSubmit = window.vars.uploadSelectImage.querySelector('#upload-submit');
   var effectImagePreview = window.vars.uploadSelectImage.querySelector('.effect-image-preview');
-  var MAX_HASHTAG_LENGTH = 20;
-  var MAX_HASHTAGS_QUANTITY = 5;
   var uploadFormHashtags = window.vars.uploadSelectImage.querySelector('.upload-form-hashtags');
   var uploadResizeControlsValueNumber;
   var rangeSlider = document.querySelector('.upload-effect-level');
@@ -16,14 +22,9 @@
   var rangeSliderPin = rangeSlider.querySelector('.upload-effect-level-pin');
   var rangeSliderInput = rangeSlider.querySelector('.upload-effect-level-value');
   var rangeSliderLevel = rangeSlider.querySelector('.upload-effect-level-val');
-  var SLIDER_LINE_LENGTH = 455;
-  var step = SLIDER_LINE_LENGTH / 100;
-  var DEFAULT_EFFECT_VALUE = 20;
-  var UPLOAD_RESIZE_STEP = 25;
-  var UPLOAD_RESIZE_MIN = 25;
-  var UPLOAD_RESIZE_MAX = 100;
   var checkedEffectName;
 
+  rangeSliderInput.classList.add('hidden');
 
   // Validity check and reset form after submit
   uploadSubmit.addEventListener('click', function () {

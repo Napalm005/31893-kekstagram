@@ -5,6 +5,8 @@
   var uploadOverlay = window.vars.uploadSelectImage.querySelector('.upload-overlay');
   var uploadFormCancel = window.vars.uploadSelectImage.querySelector('.upload-form-cancel');
 
+  uploadFormCancel.style.fontSize = '0';
+
   uploadFile.addEventListener('change', function (evt) {
     evt.preventDefault();
     showFormWindowing();
