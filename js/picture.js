@@ -1,12 +1,12 @@
 'use strict';
 
 (function () {
+  var MAX_COMMENT_SIGNS = 140;
   var galleryOverlay = document.querySelector('.gallery-overlay');
   var galleryCloseTrigger = document.querySelector('.gallery-overlay-close');
   var galleryOverlayImage = document.querySelector('.gallery-overlay-image');
   var likesCount = document.querySelector('.likes-count');
   var commentsCount = document.querySelector('.comments-count');
-  var MAX_COMMENT_SIGNS = 140;
 
   // Comments validity
   window.vars.uploadFormDescription.addEventListener('invalid', function () {
@@ -35,8 +35,8 @@
   });
   function fillGalleryOverlay(photo) {
     galleryOverlayImage.src = photo.querySelector('img').src;
-    likesCount.innerText = photo.querySelector('.picture-likes').innerText;
-    commentsCount.innerText = photo.querySelectorAll('.picture-comments').length;
+    likesCount.textContent = photo.querySelector('.picture-likes').textContent;
+    commentsCount.textContent = photo.querySelectorAll('.picture-comments').length;
   }
 
   galleryCloseTrigger.addEventListener('click', function () {
