@@ -1,12 +1,12 @@
 'use strict';
 
 (function () {
+  var MAX_COMMENT_SIGNS = 140;
   var galleryOverlay = document.querySelector('.gallery-overlay');
   var galleryCloseTrigger = document.querySelector('.gallery-overlay-close');
   var galleryOverlayImage = document.querySelector('.gallery-overlay-image');
   var likesCount = document.querySelector('.likes-count');
   var commentsCount = document.querySelector('.comments-count');
-  var MAX_COMMENT_SIGNS = 140;
 
   // Comments validity
   window.vars.uploadFormDescription.addEventListener('invalid', function () {
