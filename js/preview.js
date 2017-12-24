@@ -7,20 +7,17 @@
 
   uploadFormCancel.style.fontSize = '0';
 
-  uploadFile.addEventListener('change', function (evt) {
+  uploadFile.addEventListener('change', onUploadInputChange);
+  function onUploadInputChange(evt) {
     evt.preventDefault();
-    showFormWindowing();
-  });
+    window.photoUpload();
+  }
   uploadFormCancel.addEventListener('click', function () {
     closeFormWindowing();
   });
   uploadFormCancel.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, closeFormWindowing);
   });
-  function showFormWindowing() {
-    uploadOverlay.classList.remove('hidden');
-    document.addEventListener('keydown', onFormWindowingEscPress);
-  }
   function closeFormWindowing() {
     uploadOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onFormWindowingEscPress);
@@ -32,6 +29,11 @@
   }
 
   window.preview = {
-    uploadOverlay: uploadOverlay
+    uploadOverlay: uploadOverlay,
+    uploadFile: window.vars.uploadSelectImage.querySelector('#upload-file'),
+    showFormWindowing: function () {
+      uploadOverlay.classList.remove('hidden');
+      document.addEventListener('keydown', onFormWindowingEscPress);
+    }
   };
 })();
